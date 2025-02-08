@@ -117,7 +117,8 @@ class Plat
 
     public function addIdhisto(Historique $idhisto): static
     {
-        if (!$this->idhisto->contains($idhisto)) {
+        if (!$this->idhisto->contains($idhisto)) 
+        {
             $this->idhisto->add($idhisto);
             $idhisto->setIdplat($this);
         }

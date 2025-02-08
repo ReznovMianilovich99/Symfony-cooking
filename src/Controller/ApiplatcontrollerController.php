@@ -13,7 +13,6 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/plat')]
 final class ApiplatcontrollerController extends AbstractController
 {
     private SerializerInterface $serializer;
@@ -23,54 +22,51 @@ final class ApiplatcontrollerController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/all',name: 'app_plat_index', methods: ['GET'])]
+    #[Route('/apiplat/all',methods: "GET")]
     public function index(PlatRepository $platRepository): JsonResponse
     {
-        $plats = $platRepository->findAll();
-        $data = $this->serializer->serialize($plats, 'json', ['groups' => 'plat:read']);
+        $rectte = $platRepository->findAll();
+        $projectDTOs = array_map(fn(Recette $recette) => new RecetteDTO($recette), $rectte);
+        $data = $this->serializer->serialize($projectDTOs,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/byid/{id}', name: 'app_plat_show', methods: ['GET'])]
-    public function show(Plat $plat): JsonResponse
+    #[Route('/apiplat/new', methods: 'POST')]
+    public function create(#[MapRequestPayload] Recette $project, EntityManagerInterface $em)
     {
-        $data = $this->serializer->serialize($plat, 'json', ['groups' => 'plat:read']);
-
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
-    }
-
-    #[Route('/new', name: 'app_plat_new', methods: ['POST'])]
-    public function create(#[MapRequestPayload] Plat $project, EntityManagerInterface $em){
         $em->persist($project);
         $em->flush();
         return $this->json("OK");
     }
 
-    #[Route('/{id}/edit', name: 'app_plat_edit', methods: ['PUT'])]
-    public function edit(Request $request, Plat $plat, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apiplat/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
+    public function show(int $id , PlatRepository $platRepository): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $recette = $platRepository->findById($id);
+        $projectDTOs = array_map(fn(Recette $recettes) => new RecetteDTO($recettes), $recette);
+        $data = $this->serializer->serialize($recette, 'json');
 
-        $form = $this->createForm(PlatType::class, $plat);
-        $form->submit($data);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $responseData = $this->serializer->serialize($plat, 'json', ['groups' => 'plat:read']);
-            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/delete/{id}', name: 'app_plat_delete', methods: ['DELETE'])]
-    public function delete(Plat $plat, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apiplat/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
+    public function edit(Request $req, int $id, #[MapRequestPayload] Recette $recette, EntityManagerInterface $em, PlatRepository $repository){
+        $exist = $repository->find($id);
+        $exist->setIdplat($recette->getIdplat());
+        // Update entity with form data
+        $em->flush();
+
+        return $this->json("OK update");
+    }
+
+    #[Route('/apiplat/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
+    public function delete(EntityManagerInterface $entityManager , PlatRepository $repository)
     {
-        $entityManager->remove($plat);
+        $Recette = $repository->findById($id);
+        $entityManager->remove($Recette);
         $entityManager->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return $this->json("OK deleted");
     }
 }

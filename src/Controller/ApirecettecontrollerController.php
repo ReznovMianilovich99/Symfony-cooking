@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\RecetteDTO;
 use App\Entity\Recette;
 use App\Form\RecetteType;
 use App\Repository\RecetteRepository;
@@ -13,7 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 
-#[Route('/api/recette')]
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Routing\Requirement\Requirement;
+
+
 final class ApirecettecontrollerController extends AbstractController
 {
     private SerializerInterface $serializer;
@@ -23,54 +27,49 @@ final class ApirecettecontrollerController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/all',name: 'app_recette_index', methods: ['GET'])]
+    #[Route('/apirecette/all',methods: "GET")]
     public function index(RecetteRepository $recetteRepository): JsonResponse
     {
-        $recettes = $recetteRepository->findAll();
-        $data = $this->serializer->serialize($recettes, 'json', ['groups' => 'recette:read']);
+        $rectte = $recetteRepository->findAll();
+        $projectDTOs = array_map(fn(Recette $recette) => new RecetteDTO($recette), $rectte);
+        $data = $this->serializer->serialize($projectDTOs,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/byid/{id}', name: 'app_recette_show', methods: ['GET'])]
-    public function show(Recette $recette): JsonResponse
+    #[Route('/apirecette/new', methods: 'POST')]
+    public function create(#[MapRequestPayload] Recette $project, EntityManagerInterface $em)
     {
-        $data = $this->serializer->serialize($recette, 'json', ['groups' => 'recette:read']);
-
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
-    }
-
-    #[Route('/new', name: 'app_recette_new', methods: ['POST'])]
-    public function create(#[MapRequestPayload] Recette $project, EntityManagerInterface $em){
         $em->persist($project);
         $em->flush();
         return $this->json("OK");
     }
 
-    #[Route('/{id}/edit', name: 'app_recette_edit', methods: ['PUT'])]
-    public function edit(Request $request, Recette $recette, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apirecette/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
+    public function show(int $id , RecetteRepository $recetteRepository): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
-
-        $form = $this->createForm(RecetteType::class, $recette);
-        $form->submit($data);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $responseData = $this->serializer->serialize($recette, 'json', ['groups' => 'recette:read']);
-            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
+        $recette = $recetteRepository->findById($id);
+        $projectDTOs = array_map(fn(Recette $recettes) => new RecetteDTO($recettes), $recette);
+        $data = $this->serializer->serialize($recette, 'json');
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/delete/{id}', name: 'app_recette_delete', methods: ['DELETE'])]
-    public function delete(Recette $recette, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apirecette/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
+    public function edit(Request $req, int $id, #[MapRequestPayload] Recette $recette, EntityManagerInterface $em, RecetteRepository $repository){
+        $exist = $repository->find($id);
+        $exist->setIdplat($recette->getIdplat());
+        // Update entity with form data
+        $em->flush();
+        return $this->json("OK update");
+    }
+
+    #[Route('/apirecette/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
+    public function delete(EntityManagerInterface $entityManager , RecetteRepository $repository)
     {
-        $entityManager->remove($recette);
+        $Recette = $repository->findById($id);
+        $entityManager->remove($Recette);
         $entityManager->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return $this->json("OK deleted");
     }
 }

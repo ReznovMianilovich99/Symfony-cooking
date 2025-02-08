@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 // #[Route('/apicon/user')]
 final class ApiusercontrollerController extends AbstractController
@@ -67,7 +68,7 @@ final class ApiusercontrollerController extends AbstractController
     #[Route('/apiuser/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
     public function delete(EntityManagerInterface $entityManager , UserRepository $repository)
     {
-        $user = $userRepository->findById($id);
+        $user = $repository->findById($id);
         $entityManager->remove($user);
         $entityManager->flush();
 
