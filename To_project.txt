@@ -1,0 +1,90 @@
+techno : symfony
+- connection a firebase
+- authentification
+BackOffice :
+  - front
+      - login
+         - email
+         - password
+      - home
+         - liste 
+            - ingredient
+            - plats
+            - recettes
+            - client
+         - statistique
+            - statistique : par jour / par semaine / par mois
+               - plat le plus vendue
+               - plat avec le plus de cuisson
+               - ingredient le plus utiliser
+               - nombre de plat fini
+               - total vente fait
+            - gestion de stock : par jour / par semaine / par mois
+               - historique de sortie d'ingredient
+  - metier
+      - login
+         - fonction de connection (email,password)
+            -> return oui ou non
+      - home
+         - liste
+            - liste (nom base) | ex : liste (ingredient)
+               -> return liste complet
+         - statistique
+            - getMost (parametre) | ex : getMost (plat vendue),getMost (palt avec plus de cuisson),getMost (ingredient utiliser)
+               -> return une line de reponse
+            - getTotal (parametre) | ex : getTotal (vente),getMost (nombre plat fini)
+               -> return une line de reponse
+            - getHistorique (parametre) | ex : getHistorique (ingredient sortie)
+               -> return liste historique
+FrontOffice :
+  - front
+      - login / sign in
+         - email
+         - password
+      - liste commande du client
+         - liste commande
+         - liste de 2 a 3 line des commande d'autre client avant la commande de l'utilisateur (sans montrer les clients et la quantiter mais uniquement le nom des plat et leur temps d'attente)
+  - metier
+      - login / sign in
+         - fonction de connection (email,password)
+            -> return oui ou non
+         - fonction d'inscription (email,password)
+            -> return oui ou non
+      - liste
+         - liste (commande,idClient)
+               -> return liste complet
+base :
+  - user
+      - id
+      - email
+      - password
+      - roles
+
+  - ingredient
+      - id
+      - nom
+      - stock
+      - image
+
+  - plat
+      - id
+      - nom
+      - prix
+      - temps de cuisson
+      - image
+
+  - recette
+      - idPlat
+      - idIngredient
+
+  - historique
+      - date heure
+      - idPlat
+      - quantiter
+      - prix
+
+- commande 
+   -idcommande
+   -iduser
+   -listplat
+   -dateheure
