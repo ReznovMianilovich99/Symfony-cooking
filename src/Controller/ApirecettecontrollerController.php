@@ -66,7 +66,7 @@ final class ApirecettecontrollerController extends AbstractController
     #[Route('/apirecette/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
     public function delete(EntityManagerInterface $entityManager , RecetteRepository $repository)
     {
-        $Recette = $repository->findById($id);
+        $Recette = $RecetteRepository->findById($id);
         $entityManager->remove($Recette);
         $entityManager->flush();
 
