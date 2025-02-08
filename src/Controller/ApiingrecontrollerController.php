@@ -12,8 +12,8 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
+use Symfony\Component\Routing\Requirement\Requirement;
 
-#[Route('/apicontro/ingredient')]
 final class ApiingrecontrollerController extends AbstractController
 {
     private SerializerInterface $serializer;
@@ -23,54 +23,52 @@ final class ApiingrecontrollerController extends AbstractController
         $this->serializer = $serializer;
     }
 
-    #[Route('/all',name: 'app_ingredient_index', methods: ['GET'])]
+    #[Route('/apiingredient/all',methods: "GET")]
     public function index(IngredientRepository $ingredientRepository): JsonResponse
     {
-        $ingredients = $ingredientRepository->findAll();
-        $data = $this->serializer->serialize($ingredients, 'json', ['groups' => 'ingredient:read']);
+        $rectte = $ingredientRepository->findAll();
+        $data = $this->serializer->serialize($rectte,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/byid/{id}', name: 'app_ingredient_show', methods: ['GET'])]
-    public function show(Ingredient $ingredient): JsonResponse
+    #[Route('/apiingredient/new', methods: 'POST')]
+    public function create(#[MapRequestPayload] Plat $project, EntityManagerInterface $em)
     {
-        $data = $this->serializer->serialize($ingredient, 'json', ['groups' => 'ingredient:read']);
-
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
-    }
-
-    #[Route('/new', name: 'app_ingredient_new', methods: ['POST'])]
-    public function create(#[MapRequestPayload] Ingredient $project, EntityManagerInterface $em){
         $em->persist($project);
         $em->flush();
         return $this->json("OK");
     }
 
-    #[Route('/{id}/edit', name: 'app_ingredient_edit', methods: ['PUT'])]
-    public function edit(Request $request, Ingredient $ingredient, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apiingredient/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
+    public function show(int $id , IngredientRepository $ingredientRepository): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        $recette = $ingredientRepository->findById($id);
+        $data = $this->serializer->serialize($recette, 'json');
 
-        $form = $this->createForm(IngredientType::class, $ingredient);
-        $form->submit($data);
-
-        if ($form->isSubmitted() && $form->isValid()) {
-            $entityManager->flush();
-
-            $responseData = $this->serializer->serialize($ingredient, 'json', ['groups' => 'ingredient:read']);
-            return new JsonResponse($responseData, Response::HTTP_OK, [], true);
-        }
-
-        return new JsonResponse(['error' => 'Invalid data'], Response::HTTP_BAD_REQUEST);
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/delete/{id}', name: 'app_ingredient_delete', methods: ['DELETE'])]
-    public function delete(Ingredient $ingredient, EntityManagerInterface $entityManager): JsonResponse
+    #[Route('/apiingredient/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
+    public function edit(Request $req, int $id, #[MapRequestPayload] Plat $recette, EntityManagerInterface $em, IngredientRepository $repository){
+        $exist = $repository->find($id);
+        $exist->setNom($recette->getNom());
+        $exist->setPrix($recette->getPrix());
+        $exist->setCookingtime($recette->getCookingtime());
+        $exist->setLinkimage($recette->getLinkimage());
+
+        // Update entity with form data
+        $em->flush();
+        return $this->json("OK update");
+    }
+
+    #[Route('/apiingredient/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
+    public function delete(EntityManagerInterface $entityManager , IngredientRepository $repository)
     {
-        $entityManager->remove($ingredient);
+        $Recette = $repository->findById($id);
+        $entityManager->remove($Recette);
         $entityManager->flush();
 
-        return new JsonResponse(null, Response::HTTP_NO_CONTENT);
+        return $this->json("OK deleted");
     }
 }

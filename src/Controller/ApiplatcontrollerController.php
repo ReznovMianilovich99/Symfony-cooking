@@ -27,14 +27,13 @@ final class ApiplatcontrollerController extends AbstractController
     public function index(PlatRepository $platRepository): JsonResponse
     {
         $rectte = $platRepository->findAll();
-        $projectDTOs = array_map(fn(Recette $recette) => new RecetteDTO($recette), $rectte);
-        $data = $this->serializer->serialize($projectDTOs,'json');
+        $data = $this->serializer->serialize($rectte,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apiplat/new', methods: 'POST')]
-    public function create(#[MapRequestPayload] Recette $project, EntityManagerInterface $em)
+    public function create(#[MapRequestPayload] Plat $project, EntityManagerInterface $em)
     {
         $em->persist($project);
         $em->flush();
@@ -45,16 +44,19 @@ final class ApiplatcontrollerController extends AbstractController
     public function show(int $id , PlatRepository $platRepository): JsonResponse
     {
         $recette = $platRepository->findById($id);
-        $projectDTOs = array_map(fn(Recette $recettes) => new RecetteDTO($recettes), $recette);
         $data = $this->serializer->serialize($recette, 'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apiplat/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
-    public function edit(Request $req, int $id, #[MapRequestPayload] Recette $recette, EntityManagerInterface $em, PlatRepository $repository){
+    public function edit(Request $req, int $id, #[MapRequestPayload] Plat $recette, EntityManagerInterface $em, PlatRepository $repository){
         $exist = $repository->find($id);
-        $exist->setIdplat($recette->getIdplat());
+        $exist->setNom($recette->getNom());
+        $exist->setPrix($recette->getPrix());
+        $exist->setCookingtime($recette->getCookingtime());
+        $exist->setLinkimage($recette->getLinkimage());
+
         // Update entity with form data
         $em->flush();
 

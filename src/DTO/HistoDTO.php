@@ -1,35 +1,25 @@
 <?php
 
 namespace App\DTO;
-use App\Entity\Recette;
 use App\Entity\Plat;
-use App\Entity\Ingredient;
+use App\Entity\Historique;
 
 class HistoDTO
 {
     public $id;
-    public $idplat;
+    public $Dateheurehisto;
     public $idingredient;
 
-    public function __construct(Recette $rct)
+    public function __construct(Historique $rct)
     {
         $this->id = $rct->getId();
-        
-        $plat = $rct->getIdplat(); // Assuming this returns a single Plat object
-
-        $this->idplat = [
+        $this->Dateheurehisto = $rct->getDateheurehisto();
+        $plat = $rct->getIdplat();
+        $this->idplat = 
+        [
             'idplat' => $plat->getId(),
             'nomplat' => $plat->getNom()
         ];
-
-        $this->idingredient = array_map(function (Ingredient $ingredients) 
-        {
-            return [
-                'idIngredient' => $ingredients->getId(),
-                'nomIngredient' => $ingredients->getNom(),
-                'stockIngredient' => $ingredients->getStock()
-            ];
-        }, $rct->getIdingredient()->toArray());
     }
 }
 ?>

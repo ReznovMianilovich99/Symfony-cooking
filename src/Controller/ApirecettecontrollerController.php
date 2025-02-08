@@ -50,7 +50,7 @@ final class ApirecettecontrollerController extends AbstractController
     {
         $recette = $recetteRepository->findById($id);
         $projectDTOs = array_map(fn(Recette $recettes) => new RecetteDTO($recettes), $recette);
-        $data = $this->serializer->serialize($recette, 'json');
+        $data = $this->serializer->serialize($projectDTOs, 'json');
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
