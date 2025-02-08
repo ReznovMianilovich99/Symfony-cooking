@@ -16,8 +16,6 @@ final class RecetteController extends AbstractController
 {
     #[Route(name: 'app_recette_index', methods: ['GET'])]
     public function index(RecetteRepository $recetteRepository): Response
-
-
     {
         $recipy = $recetteRepository->findAll();
         return $this->render('recette/index.html.twig', 
@@ -34,11 +32,13 @@ final class RecetteController extends AbstractController
         $form = $this->createForm(RecetteType::class, $recette);
         $form->handleRequest($request);
 
+
+
         if ($form->isSubmitted() && $form->isValid()) 
         {
             $entityManager->persist($recette);
             $entityManager->flush();
-
+            
             return $this->redirectToRoute('app_recette_index', [], Response::HTTP_SEE_OTHER);
         }
 
