@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\PlatDTO;
 use App\Entity\Plat;
 use App\Form\PlatType;
 use App\Repository\PlatRepository;
@@ -13,6 +14,10 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use Symfony\Component\Serializer\Encoder\JsonEncoder;
+use Symfony\Component\Serializer\Normalizer\ObjectNormalizer;
+use Symfony\Component\Serializer\Serializer;
 
 final class ApiplatcontrollerController extends AbstractController
 {
@@ -20,14 +25,28 @@ final class ApiplatcontrollerController extends AbstractController
 
     public function __construct(SerializerInterface $serializer)
     {
+        $normalizer = new ObjectNormalizer(null, null, null, null, null, null, 
+        [
+            ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+                return $object->getId(); // Retourne un identifiant unique au lieu de l'objet complet
+            }
+        ]);
+        $serializer = new Serializer([$normalizer], [new JsonEncoder()]);
         $this->serializer = $serializer;
     }
 
     #[Route('/apiplat/all',methods: "GET")]
     public function index(PlatRepository $platRepository): JsonResponse
     {
-        $rectte = $platRepository->findAll();
-        $data = $this->serializer->serialize($rectte,'json');
+
+        $plats = $platRepository->findAll();
+    // Convert each Plat entity to a PlatDTO
+    $platDTOs = [];
+    foreach ($plats as $plat) 
+    {
+        $platDTOs[] = new PlatDTO($plat);
+    }
+        $data = $this->serializer->serialize($platDTOs,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
@@ -64,11 +83,10 @@ final class ApiplatcontrollerController extends AbstractController
     }
 
     #[Route('/apiplat/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
-    public function delete(EntityManagerInterface $entityManager , PlatRepository $repository)
+    public function delete(Plat $use, EntityManagerInterface $entityManager)
     {
-        $Recette = $repository->findById($id);
-        $entityManager->remove($Recette);
-        $entityManager->flush();
+            $entityManager->remove($use);
+            $entityManager->flush();
 
         return $this->json("OK deleted");
     }

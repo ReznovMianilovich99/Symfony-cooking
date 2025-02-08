@@ -12,9 +12,9 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
 use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
+use App\Entity\DeletableEntityInterface;
 
 // #[Route('/apicon/user')]
 final class ApiusercontrollerController extends AbstractController
@@ -35,8 +35,20 @@ final class ApiusercontrollerController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    // #[Route('/apiuser/new', methods: 'POST')]
+    // public function create(EntityManagerInterface $em , #[MapRequestPayload(serializationContext:[
+    //     'groups' => ['users.create']
+    // ])] User $user)
+    // {
+    //     dd($user);
+    //     // return $this->json($user,200,[],[
+    //     //     'groups' => ['users.show']
+    //     // ]);
+    // }
+
     #[Route('/apiuser/new', methods: 'POST')]
-    public function create(#[MapRequestPayload] User $project, EntityManagerInterface $em){
+    public function create(#[MapRequestPayload] User $project, EntityManagerInterface $em)
+    {
         $em->persist($project);
         $em->flush();
         return $this->json("OK");
@@ -66,11 +78,10 @@ final class ApiusercontrollerController extends AbstractController
     }
 
     #[Route('/apiuser/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
-    public function delete(EntityManagerInterface $entityManager , UserRepository $repository)
+    public function delete(User $use, EntityManagerInterface $entityManager)
     {
-        $user = $repository->findById($id);
-        $entityManager->remove($user);
-        $entityManager->flush();
+            $entityManager->remove($use);
+            $entityManager->flush();
 
         return $this->json("OK deleted");
     }

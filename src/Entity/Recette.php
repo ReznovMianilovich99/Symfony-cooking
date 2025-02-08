@@ -7,8 +7,8 @@ use App\Repository\RecetteRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
-#[ApiResource]
 #[ORM\Entity(repositoryClass: RecetteRepository::class)]
 class Recette
 {

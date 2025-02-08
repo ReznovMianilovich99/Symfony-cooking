@@ -17,7 +17,8 @@ class RecetteDTO
         
         $plat = $rct->getIdplat(); // Assuming this returns a single Plat object
 
-        $this->idplat = [
+        $this->idplat = 
+        [
             'idplat' => $plat->getId(),
             'nomplat' => $plat->getNom()
         ];

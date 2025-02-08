@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\IngredientDTO;
 use App\Entity\Ingredient;
 use App\Form\IngredientType;
 use App\Repository\IngredientRepository;
@@ -13,6 +14,7 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use Symfony\Component\Serializer\SerializerInterface;
 use Symfony\Component\Routing\Requirement\Requirement;
+use Symfony\Component\HttpKernel\Attribute\MapRequestPayload;
 
 final class ApiingrecontrollerController extends AbstractController
 {
@@ -26,14 +28,20 @@ final class ApiingrecontrollerController extends AbstractController
     #[Route('/apiingredient/all',methods: "GET")]
     public function index(IngredientRepository $ingredientRepository): JsonResponse
     {
-        $rectte = $ingredientRepository->findAll();
-        $data = $this->serializer->serialize($rectte,'json');
+    $ingres = $ingredientRepository->findAll();
+    // Convert each Ingredient entity to a IngredientDTO
+    $IngreDTOs = [];
+    foreach ($ingres as $ingre) 
+    {
+        $IngreDTOs[] = new IngredientDTO($ingre);
+    }
+        $data = $this->serializer->serialize($IngreDTOs,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apiingredient/new', methods: 'POST')]
-    public function create(#[MapRequestPayload] Plat $project, EntityManagerInterface $em)
+    public function create(#[MapRequestPayload] Ingredient $project, EntityManagerInterface $em)
     {
         $em->persist($project);
         $em->flush();
@@ -50,12 +58,11 @@ final class ApiingrecontrollerController extends AbstractController
     }
 
     #[Route('/apiingredient/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
-    public function edit(Request $req, int $id, #[MapRequestPayload] Plat $recette, EntityManagerInterface $em, IngredientRepository $repository){
+    public function edit(Request $req, int $id, #[MapRequestPayload] Ingredient $recette, EntityManagerInterface $em, IngredientRepository $repository){
         $exist = $repository->find($id);
         $exist->setNom($recette->getNom());
-        $exist->setPrix($recette->getPrix());
-        $exist->setCookingtime($recette->getCookingtime());
-        $exist->setLinkimage($recette->getLinkimage());
+        $exist->setStock($recette->getStock());
+        $exist->setLinkimage($recette->getImagelink());
 
         // Update entity with form data
         $em->flush();
@@ -63,11 +70,10 @@ final class ApiingrecontrollerController extends AbstractController
     }
 
     #[Route('/apiingredient/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
-    public function delete(EntityManagerInterface $entityManager , IngredientRepository $repository)
+    public function delete(Ingredient $use, EntityManagerInterface $entityManager)
     {
-        $Recette = $repository->findById($id);
-        $entityManager->remove($Recette);
-        $entityManager->flush();
+            $entityManager->remove($use);
+            $entityManager->flush();
 
         return $this->json("OK deleted");
     }

@@ -5,8 +5,8 @@ namespace App\Entity;
 use ApiPlatform\Metadata\ApiResource;
 use App\Repository\HistoriqueRepository;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Ignore;
 
-#[ApiResource]
 #[ORM\Entity(repositoryClass: HistoriqueRepository::class)]
 class Historique
 {

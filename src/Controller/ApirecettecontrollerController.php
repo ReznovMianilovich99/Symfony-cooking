@@ -4,6 +4,8 @@ namespace App\Controller;
 
 use App\DTO\RecetteDTO;
 use App\Entity\Recette;
+use App\Entity\Ingredient;
+use App\Entity\Plat;
 use App\Form\RecetteType;
 use App\Repository\RecetteRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -33,17 +35,45 @@ final class ApirecettecontrollerController extends AbstractController
         $rectte = $recetteRepository->findAll();
         $projectDTOs = array_map(fn(Recette $recette) => new RecetteDTO($recette), $rectte);
         $data = $this->serializer->serialize($projectDTOs,'json');
-
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apirecette/new', methods: 'POST')]
-    public function create(#[MapRequestPayload] Recette $project, EntityManagerInterface $em)
-    {
-        $em->persist($project);
-        $em->flush();
-        return $this->json("OK");
+public function create(Request $request, EntityManagerInterface $em ): Response
+{
+    $data = json_decode($request->getContent(), true);
+
+    // Charger le Plat
+    $plat = $em->getRepository(Plat::class)->find($data['idplat']['id']);
+    if (!$plat) {
+        throw new \Exception("Plat non trouvé");
     }
+
+    // Charger les Ingrédients
+    $ingredients = [];
+    foreach ($data['idingredient'] as $ingredientData) 
+    {
+        $ingredient = $em->getRepository(Ingredient::class)->find($ingredientData['id']);
+        if (!$ingredient) 
+        {
+            throw new \Exception("Ingrédient non trouvé");
+        }
+        $ingredients[] = $ingredient;
+    }
+
+    // Créer la Recette
+    $recette = new Recette();
+    $recette->setIdplat($plat);
+    foreach ($ingredients as $ingredient) {
+        $recette->addIdingredient($ingredient);
+    }
+    // dd($recette);
+    // Enregistrer la Recette
+    $em->persist($recette);
+    $em->flush();
+
+    return $this->json($recette, Response::HTTP_OK, []);
+}
 
     #[Route('/apirecette/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
     public function show(int $id , RecetteRepository $recetteRepository): JsonResponse
@@ -55,20 +85,46 @@ final class ApirecettecontrollerController extends AbstractController
     }
 
     #[Route('/apirecette/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
-    public function edit(Request $req, int $id, #[MapRequestPayload] Recette $recette, EntityManagerInterface $em, RecetteRepository $repository){
+    public function edit(Request $req, int $id, EntityManagerInterface $em, RecetteRepository $repository){
+        $data = json_decode($req->getContent(), true);
+
+        // Charger le Plat
+        $plat = $em->getRepository(Plat::class)->find($data['idplat']['id']);
+        if (!$plat) {
+            throw new \Exception("Plat non trouvé");
+        }
+    
+        // Charger les Ingrédients
+        $ingredients = [];
+        foreach ($data['idingredient'] as $ingredientData) 
+        {
+            $ingredient = $em->getRepository(Ingredient::class)->find($ingredientData['id']);
+            if (!$ingredient) 
+            {
+                throw new \Exception("Ingrédient non trouvé");
+            }
+            $ingredients[] = $ingredient;
+        }
+
         $exist = $repository->find($id);
-        $exist->setIdplat($recette->getIdplat());
+
+            // Créer la Recette
+    $exist->setIdplat($plat);
+    foreach ($ingredients as $ingredient) 
+    {
+        $exist->addIdingredient($ingredient);
+    }
+
         // Update entity with form data
         $em->flush();
         return $this->json("OK update");
     }
 
     #[Route('/apirecette/delete/{id}', methods: 'DELETE' , requirements: ['id' => Requirement::DIGITS])]
-    public function delete(EntityManagerInterface $entityManager , RecetteRepository $repository)
+    public function delete(Recette $use, EntityManagerInterface $entityManager)
     {
-        $Recette = $RecetteRepository->findById($id);
-        $entityManager->remove($Recette);
-        $entityManager->flush();
+            $entityManager->remove($use);
+            $entityManager->flush();
 
         return $this->json("OK deleted");
     }
