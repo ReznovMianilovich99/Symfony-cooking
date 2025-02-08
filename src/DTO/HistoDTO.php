@@ -15,7 +15,6 @@ class HistoDTO
         $this->id = $rct->getId();
         $this->Dateheurehisto = $rct->getDateheurehisto();
         $plat = $rct->getIdplat();
-        $this->idplat = 
         [
             'idplat' => $plat->getId(),
             'nomplat' => $plat->getNom()

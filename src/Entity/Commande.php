@@ -6,6 +6,7 @@ use ApiPlatform\Metadata\ApiResource;
 use App\Repository\CommandeRepository;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
+use Doctrine\DBAL\Types\Types;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommandeRepository::class)]
@@ -15,9 +16,6 @@ class Commande
     #[ORM\GeneratedValue]
     #[ORM\Column]
     private ?int $id = null;
-
-    #[ORM\Column]
-    private ?int $idcommande = null;
 
     #[ORM\OneToOne(inversedBy: 'iduser', cascade: ['persist', 'remove'])]
     #[ORM\JoinColumn(nullable: false)]
@@ -32,6 +30,12 @@ class Commande
     #[ORM\Column]
     private ?\DateTimeImmutable $dateheurecommande = null;
 
+    #[ORM\Column(type: Types::DECIMAL, precision: 30, scale: 2)]
+    private ?string $totaleprice = null;
+
+    #[ORM\Column]
+    private ?bool $paiementcheck = null;
+
     public function __construct()
     {
         $this->listplat = new ArrayCollection();
@@ -40,18 +44,6 @@ class Commande
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdcommande(): ?int
-    {
-        return $this->idcommande;
-    }
-
-    public function setIdcommande(int $idcommande): static
-    {
-        $this->idcommande = $idcommande;
-
-        return $this;
     }
 
     public function getIduser(): ?User
@@ -98,6 +90,30 @@ class Commande
     public function setDateheurecommande(\DateTimeImmutable $dateheurecommande): static
     {
         $this->dateheurecommande = $dateheurecommande;
+
+        return $this;
+    }
+
+    public function getTotaleprice(): ?string
+    {
+        return $this->totaleprice;
+    }
+
+    public function setTotaleprice(string $totaleprice): static
+    {
+        $this->totaleprice = $totaleprice;
+
+        return $this;
+    }
+
+    public function isPaiementcheck(): ?bool
+    {
+        return $this->paiementcheck;
+    }
+
+    public function setPaiementcheck(bool $paiementcheck): static
+    {
+        $this->paiementcheck = $paiementcheck;
 
         return $this;
     }
