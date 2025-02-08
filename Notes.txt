@@ -1,0 +1,49 @@
+create user
+
+CREATE USER 'cuisto'@'127.0.0.1' IDENTIFIED BY 'cuisto';
+GRANT ALL PRIVILEGES ON *.* TO 'cuisto'@'127.0.0.1';
+FLUSH PRIVILEGES;
+
+mysql -h 127.0.0.1 -u cuisto -p cuistobase;
+
+u Lancement création base Mysql via ligne de commande
+php bin/console doctrine:database:create
+
+u Préparer la commande de migration , cela va permettre à Symfony de préparer les éléments 
+nécessaires pour la classe et les tables
+php bin/console make:migration
+
+u On peut vérifier le contenu de la migration dans le répertoire migration
+u Lancer la migration
+php bin/console doctrine:migrations:migrate
+
+u Lancer le serveur Symfony
+u php -S 127.0.0.1:8000 -t public 
+
+u Utilisation de Postman pour tester les API 
+
+mysql -u amboara -p -h 127.0.0.1
+
+php bin/console make:Entity
+
+php bin/console make:Controller
+
+{
+	"@context": "\/api\/contexts\/Recette",
+	"@id": "\/api\/recettes",
+	"@type": "Collection",
+	"totalItems": 1,
+	"member": [
+		{
+			"@id": "\/api\/recettes\/1",
+			"@type": "Recette",
+			"id": 1,
+			"idplat": "\/api\/plats\/1",
+			"idingredient": [
+				"\/api\/ingredients\/1",
+				"\/api\/ingredients\/2"
+			]
+		}
+	]
+}
+
