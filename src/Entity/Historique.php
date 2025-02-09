@@ -16,9 +16,6 @@ class Historique
     private ?int $id = null;
 
     #[ORM\Column]
-    private ?int $idhisto = null;
-
-    #[ORM\Column]
     private ?\DateTimeImmutable $Dateheurehisto = null;
 
     #[ORM\ManyToOne(inversedBy: 'idhisto')]
@@ -28,17 +25,6 @@ class Historique
     public function getId(): ?int
     {
         return $this->id;
-    }
-
-    public function getIdhisto(): ?int
-    {
-        return $this->idhisto;
-    }
-
-    public function setIdhisto(int $idhisto): static
-    {
-        $this->idhisto = $idhisto;
-        return $this;
     }
 
     public function getDateheurehisto(): ?\DateTimeImmutable
