@@ -36,6 +36,9 @@ class Commande
     #[ORM\Column]
     private ?bool $paiementcheck = null;
 
+    #[ORM\Column]
+    private ?bool $isready = null;
+
     public function __construct()
     {
         $this->listplat = new ArrayCollection();
@@ -117,4 +120,17 @@ class Commande
 
         return $this;
     }
+
+    public function isready(): ?bool
+    {
+        return $this->isready;
+    }
+
+    public function setIsready(bool $isready): static
+    {
+        $this->isready = $isready;
+
+        return $this;
+    }
+    
 }
