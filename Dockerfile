@@ -37,4 +37,4 @@ ENV PORT=8000
 EXPOSE 8000
 
 # Start the Symfony server
-CMD ["symfony", "server:start", "--port=8000", "--no-tls", "--allow-http", "--listen-ip=0.0.0.0"]
+CMD symfony server:start --port=8000 --no-tls --allow-http --listen-ip=0.0.0.0 && php bin/console doctrine:database:create
