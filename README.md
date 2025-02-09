@@ -3,18 +3,45 @@ PLAT
 get 
 https://symfony-cooking-production.up.railway.app/apiplat/all
 
+	[
+		{
+			"id": 1,
+			"nom": "Scramble Tomatoes",
+			"prix": "20000.00",
+			"cookingtime": 2000,
+			"linkimage": "qsdfgh"
+		},
+		{
+			"id": 2,
+			"nom": "Scramble eggs",
+			"prix": "20000.00",
+			"cookingtime": 2000,
+			"linkimage": "qsdfgh"
+		}
+	]
+
 make new
 https://symfony-cooking-production.up.railway.app/apiplat/new
 	
- {
-		"nom": "Scramble Tomatoes",
+	{
+		"nom": "Scramble eggs",
 		"prix": "20000.00",
 		"cookingtime": 2000,
 		"linkimage": "qsdfgh"
-}
+	}
 
 get by id 
 https://symfony-cooking-production.up.railway.app/apiplat/byid/{id}
+
+		[
+			{
+				"id": 1,
+				"nom": "Scramble Tomatoes",
+				"prix": "20000.00",
+				"cookingtime": 2000,
+				"linkimage": "qsdfgh"
+			}
+		]
 
 update 
 https://symfony-cooking-production.up.railway.app/apiplat/{id}/edit
