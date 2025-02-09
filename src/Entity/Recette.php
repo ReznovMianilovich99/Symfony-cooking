@@ -70,4 +70,13 @@ class Recette
         $this->idingredient->removeElement($idingredient);
         return $this;
     }
+
+    /**
+     * Remove all ingredients from the recette.
+     */
+    public function removeAllIdingredient(): static
+    {
+        $this->idingredient->clear();
+        return $this;
+    }
 }
