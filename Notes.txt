@@ -15,6 +15,7 @@ php bin/console make:migration
 
 u On peut vérifier le contenu de la migration dans le répertoire migration
 u Lancer la migration
+php bin/console make:migration
 php bin/console doctrine:migrations:migrate
 
 u Lancer le serveur Symfony
