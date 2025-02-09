@@ -62,10 +62,11 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     // Créer la Recette
     $recette = new Recette();
     $recette->setIdplat($plat);
-    foreach ($ingredients as $ingredient) {
+    foreach ($ingredients as $ingredient) 
+    {
         $recette->addIdingredient($ingredient);
     }
-    // dd($recette);
+    dd($recette);
     // Enregistrer la Recette
     $em->persist($recette);
     $em->flush();
