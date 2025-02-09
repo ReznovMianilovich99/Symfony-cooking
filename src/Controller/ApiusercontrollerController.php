@@ -53,7 +53,7 @@ final class ApiusercontrollerController extends AbstractController
 
         $use = new User();
         $use->setEmail($data['email']);
-        $use->setEmail($data['password']);
+        $use->setPassword($data['password']);
         $use->getRoles();
         $em->persist($use);
         $em->flush();
