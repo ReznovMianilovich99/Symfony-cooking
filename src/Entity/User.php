@@ -30,7 +30,7 @@ class User
     private ?string $roles = null;
 
     #[ORM\OneToOne(mappedBy: 'iduser', cascade: ['persist', 'remove'])]
-    private ?Commande $iduser = null;
+    private ?Commande $iduser = null; 
 
     public function getId(): ?int
     {
