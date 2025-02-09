@@ -47,9 +47,15 @@ final class ApiusercontrollerController extends AbstractController
     // }
 
     #[Route('/apiuser/new', methods: 'POST')]
-    public function create(#[MapRequestPayload] User $project, EntityManagerInterface $em)
+    public function create(Request $req , EntityManagerInterface $em)
     {
-        $em->persist($project);
+        $data = json_decode($req->getContent(), true);
+
+        $use = new User();
+        $use->setEmail($data['email']);
+        $use->setEmail($data['password']);
+        $use->getRoles();
+        $em->persist($use);
         $em->flush();
         return $this->json("OK");
     }
