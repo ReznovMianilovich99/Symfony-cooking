@@ -104,9 +104,7 @@ public function create(Request $request, EntityManagerInterface $em ): Response
             $ingredients[] = $ingredient;
         }
 
-        $exist = $repository->find($id);
-
-            // Créer la Recette
+    $exist = $repository->find($id);        // Créer la Recette
     $exist->setIdplat($plat);
     foreach ($ingredients as $ingredient) 
     {
@@ -114,6 +112,7 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     }
 
         // Update entity with form data
+        $em->persist($exist);
         $em->flush();
         return $this->json("OK update");
     }
