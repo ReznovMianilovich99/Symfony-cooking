@@ -104,13 +104,16 @@ public function create(Request $request, EntityManagerInterface $em ): Response
             $ingredients[] = $ingredient;
         }
 
-    $exist = $repository->find($id);        // Créer la Recette
+    $exist = $repository->find($id); 
+    // Créer la Recette
     $exist->setIdplat($plat);
+
     $exist->removeAllIdingredient();
-    // foreach ($ingredients as $ingredient) 
-    // {
-    //     $exist->addIdingredient($ingredient);
-    // }
+
+    foreach ($ingredients as $ingredient) 
+    {
+        $exist->addIdingredient($ingredient);
+    }
 
         // Update entity with form data
         $em->persist($exist);
