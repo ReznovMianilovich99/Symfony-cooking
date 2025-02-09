@@ -59,7 +59,8 @@ final class ApiusercontrollerController extends AbstractController
         $em->persist($use);
         $em->flush();
         $VarName = $userRepository->findBy(['email'=>$data['email']]);
-        return new JsonResponse($VarName, Response::HTTP_OK, [], true);
+        $data = $this->serializer->serialize($VarName, 'json');
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apiuser/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
