@@ -106,10 +106,11 @@ public function create(Request $request, EntityManagerInterface $em ): Response
 
     $exist = $repository->find($id);        // Créer la Recette
     $exist->setIdplat($plat);
-    foreach ($ingredients as $ingredient) 
-    {
-        $exist->addIdingredient($ingredient);
-    }
+    $exist->removeAllIdingredient();
+    // foreach ($ingredients as $ingredient) 
+    // {
+    //     $exist->addIdingredient($ingredient);
+    // }
 
         // Update entity with form data
         $em->persist($exist);
