@@ -39,6 +39,9 @@ class Commande
     #[ORM\Column]
     private ?bool $isready = null;
 
+    #[ORM\Column]
+    private ?bool $issend = null;
+
     public function __construct()
     {
         $this->listplat = new ArrayCollection();
@@ -129,6 +132,18 @@ class Commande
     public function setIsready(bool $isready): static
     {
         $this->isready = $isready;
+
+        return $this;
+    }
+
+    public function issend(): ?bool
+    {
+        return $this->issend;
+    }
+
+    public function setIssend(bool $issend): static
+    {
+        $this->issend = $issend;
 
         return $this;
     }
