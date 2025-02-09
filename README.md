@@ -65,19 +65,19 @@ https://symfony-cooking-production.up.railway.app/apirecette/delete/{id}
 COMMANDE
 
 get 
-https://symfony-cooking-production.up.railway.app/apiingredient/all
+https://symfony-cooking-production.up.railway.app/apiCommande/all
 
 make new
-https://symfony-cooking-production.up.railway.app/apiingredient/new
+https://symfony-cooking-production.up.railway.app/apiCommande/new
 
 get by id 
-https://symfony-cooking-production.up.railway.app/apiingredient/byid/{id}
+https://symfony-cooking-production.up.railway.app/apiCommande/byid/{id}
 
 update 
-https://symfony-cooking-production.up.railway.app/apiingredient/{id}/edit
+https://symfony-cooking-production.up.railway.app/apiCommande/{id}/edit
 
 delete 
-https://symfony-cooking-production.up.railway.app/apiingredient/delete/{id}
+https://symfony-cooking-production.up.railway.app/apiCommande/delete/{id}
 
 
 USER
