@@ -82,6 +82,10 @@ class User
     {
         $this->roles = $roles;
 
+        if ($roles == null)
+        {
+            $roles = 'ROLE_USER';
+        }
         return $this;
     }
 
