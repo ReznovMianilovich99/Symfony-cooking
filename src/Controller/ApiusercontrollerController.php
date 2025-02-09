@@ -52,9 +52,10 @@ final class ApiusercontrollerController extends AbstractController
         $data = json_decode($req->getContent(), true);
 
         $use = new User();
+        $roles = 'ROLE_USER';
         $use->setEmail($data['email']);
         $use->setPassword($data['password']);
-        $use->getRoles();
+        $use->setRoles($roles);
         $em->persist($use);
         $em->flush();
         return $this->json("OK");
