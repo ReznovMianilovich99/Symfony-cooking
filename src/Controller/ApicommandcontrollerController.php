@@ -119,12 +119,16 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     $exist->setPaiementcheck($data['paiementcheck']);
     $exist->setIsready($data['isready']);
     $exist->setIssend($data['issend']);
+
+    $exist->removeAllListplat();
+
     foreach ($plats as $plat) 
     {
         $exist->addListplat($plat);
     }
 
         // Update entity with form data
+        $em->persist($exist);
         $em->flush();
         return $this->json("OK update");
     }

@@ -63,7 +63,13 @@ final class ApiplatcontrollerController extends AbstractController
     public function show(int $id , PlatRepository $platRepository): JsonResponse
     {
         $recette = $platRepository->findById($id);
-        $data = $this->serializer->serialize($recette, 'json');
+    // Convert each Plat entity to a PlatDTO
+    $platDTOs = [];
+    foreach ($recette as $plat) 
+    {
+        $platDTOs[] = new PlatDTO($plat);
+    }
+        $data = $this->serializer->serialize($platDTOs,'json');
 
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }

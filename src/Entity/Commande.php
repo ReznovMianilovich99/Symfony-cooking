@@ -74,7 +74,8 @@ class Commande
 
     public function addListplat(Plat $listplat): static
     {
-        if (!$this->listplat->contains($listplat)) {
+        if (!$this->listplat->contains($listplat)) 
+        {
             $this->listplat->add($listplat);
         }
 
@@ -84,7 +85,12 @@ class Commande
     public function removeListplat(Plat $listplat): static
     {
         $this->listplat->removeElement($listplat);
+        return $this;
+    }
 
+    public function removeAllListplat(): static
+    {
+        $this->listplat->clear();
         return $this;
     }
 
@@ -114,19 +120,30 @@ class Commande
 
     public function isPaiementcheck(): ?bool
     {
-        return $this->paiementcheck;
+        $bool = $this->paiementcheck;
+        if ($bool == null) 
+        {
+            $bool = false;
+        }
+        return $bool;
     }
 
     public function setPaiementcheck(bool $paiementcheck): static
     {
         $this->paiementcheck = $paiementcheck;
-
+        
         return $this;
     }
 
     public function isready(): ?bool
     {
-        return $this->isready;
+        $bool = $this->isready;
+
+        if ($bool == null) 
+        {
+            $bool = false;
+        }
+        return $bool;
     }
 
     public function setIsready(bool $isready): static
@@ -138,7 +155,12 @@ class Commande
 
     public function issend(): ?bool
     {
-        return $this->issend;
+        $bool = $this->isready;
+        if ($bool == null) 
+        {
+            $bool = false;
+        }
+        return $bool;
     }
 
     public function setIssend(bool $issend): static
