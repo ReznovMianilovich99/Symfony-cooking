@@ -47,7 +47,7 @@ final class ApiusercontrollerController extends AbstractController
     // }
 
     #[Route('/apiuser/new', methods: 'POST')]
-    public function create(Request $req , EntityManagerInterface $em)
+    public function create(Request $req , EntityManagerInterface $em ,UserRepository $userRepository)
     {
         $data = json_decode($req->getContent(), true);
 
@@ -58,7 +58,8 @@ final class ApiusercontrollerController extends AbstractController
         $use->setRoles($roles);
         $em->persist($use);
         $em->flush();
-        return $this->json("OK");
+        $VarName = $userRepository->findBy(['email'=>$data['email']]);
+        return new JsonResponse($VarName, Response::HTTP_OK, [], true);
     }
 
     #[Route('/apiuser/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
