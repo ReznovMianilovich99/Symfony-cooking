@@ -66,12 +66,11 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     {
         $recette->addIdingredient($ingredient);
     }
-    dd($recette);
     // Enregistrer la Recette
     $em->persist($recette);
     $em->flush();
 
-    return $this->json($recette, Response::HTTP_OK, []);
+    return $this->json("OK created");
 }
 
     #[Route('/apirecette/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]

@@ -75,7 +75,7 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     // Enregistrer la Commande
     $em->persist($commande);
     $em->flush();
-    return $this->json($commande, Response::HTTP_OK, []);
+    return $this->json("OK created");
 }
 
     #[Route('/apiCommande/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
