@@ -86,7 +86,7 @@ final class ApiusercontrollerController extends AbstractController
     }
 
     #[Route('/apiuser/byemailandpass', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
-    public function showby(Request $req , int $id , UserRepository $userRepository): JsonResponse
+    public function showby(Request $req , UserRepository $userRepository): JsonResponse
     {
         $data = json_decode($req->getContent(), true);
         // $users = $userRepository->findById($id);
