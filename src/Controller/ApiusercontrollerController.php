@@ -85,7 +85,7 @@ final class ApiusercontrollerController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/apiuser/byemailandpass', methods: 'GET')]
+    #[Route('/apiuser/byemailandpass', methods: 'POST')]
     public function showby(Request $req, UserRepository $userRepository): JsonResponse
     {
         // Récupérer les données de la requête JSON
