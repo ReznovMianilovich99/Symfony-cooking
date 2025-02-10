@@ -112,7 +112,7 @@ final class ApiusercontrollerController extends AbstractController
         $userDTO = new UserDTO($user);
         $data = $this->serializer->serialize($userDTO, 'json');
         
-        return new JsonResponse($data, Response::HTTP_OK, [], true);
+        return new JsonResponse($data['id'], Response::HTTP_OK, [], true);
     }
     
 
