@@ -109,10 +109,10 @@ final class ApiusercontrollerController extends AbstractController
         }
         
         // Si l'utilisateur est trouvé et le mot de passe est correct, retourner les données de l'utilisateur
-        $userDTO = new UserDTO($user);
-        $data = $this->serializer->serialize($userDTO, 'json');
+        // $userDTO = new UserDTO($user);
+        // $data = $this->serializer->serialize($user, 'json');
         
-        return new JsonResponse($data['id'], Response::HTTP_OK, [], true);
+        return new JsonResponse($user->getId(), Response::HTTP_OK, [], true);
     }
     
 
