@@ -2,6 +2,7 @@
 
 namespace App\Controller;
 
+use App\DTO\UserDTO;
 use App\Entity\User;
 use App\Form\UserType;
 use App\Repository\UserRepository;
@@ -30,8 +31,12 @@ final class ApiusercontrollerController extends AbstractController
     public function index(UserRepository $userRepository): JsonResponse
     {
         $users = $userRepository->findAll();
-        $data = $this->serializer->serialize($users, 'json');
 
+        foreach ($users as $user) 
+        {
+            $userDTO[] = new UserDTO($user);
+        }
+        $data = $this->serializer->serialize($userDTO, 'json');
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
@@ -59,7 +64,11 @@ final class ApiusercontrollerController extends AbstractController
         $em->persist($use);
         $em->flush();
         $VarName = $userRepository->findBy(['email'=>$data['email']]);
-        $data = $this->serializer->serialize($VarName, 'json');
+        foreach ($VarName as $user) 
+        {
+            $userDTO[] = new UserDTO($user);
+        }
+        $data = $this->serializer->serialize($userDTO, 'json');
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 

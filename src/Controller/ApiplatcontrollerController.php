@@ -27,7 +27,8 @@ final class ApiplatcontrollerController extends AbstractController
     {
         $normalizer = new ObjectNormalizer(null, null, null, null, null, null, 
         [
-            ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) {
+            ObjectNormalizer::CIRCULAR_REFERENCE_HANDLER => function ($object) 
+            {
                 return $object->getId(); // Retourne un identifiant unique au lieu de l'objet complet
             }
         ]);
