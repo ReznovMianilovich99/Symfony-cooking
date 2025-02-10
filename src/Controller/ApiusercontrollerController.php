@@ -92,7 +92,8 @@ final class ApiusercontrollerController extends AbstractController
         $data = json_decode($req->getContent(), true);
         
         // Vérifier que l'email et le mot de passe existent dans la requête
-        if (!isset($data['email']) || !isset($data['password'])) {
+        if (!isset($data['email']) || !isset($data['password'])) 
+        {
             return new JsonResponse(['error' => 'Email and password are required'], Response::HTTP_BAD_REQUEST);
         }
         
@@ -104,7 +105,8 @@ final class ApiusercontrollerController extends AbstractController
             return new JsonResponse(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
         
-        if ($data['password'] !== $user->getPassword()) {
+        if ($data['password'] !== $user->getPassword()) 
+        {
             return new JsonResponse(['error' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
         }
         
