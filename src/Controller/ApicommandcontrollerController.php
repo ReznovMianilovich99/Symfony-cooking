@@ -62,16 +62,15 @@ final class ApicommandcontrollerController extends AbstractController
 
         foreach ($plats as $plat) 
         {
-            $commande->addListplat($plat);
             foreach ($data['idplats'] as $platData) 
             {
-                for ($i=0; $i < $platData['num']; $i++) 
+                for ($i = 0; $i < $platData['num']; $i++) 
                 { 
                     $commande->addListplat($plat);
                 }
             }
         }
-        
+
         // Enregistrer la Commande
         $em->persist($commande);
         $em->flush();
