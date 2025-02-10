@@ -62,7 +62,7 @@ final class ApiingrecontrollerController extends AbstractController
         $exist = $repository->find($id);
         $exist->setNom($recette->getNom());
         $exist->setStock($recette->getStock());
-        $exist->setLinkimage($recette->getImagelink());
+        $exist->setImagelink($recette->getImagelink());
 
         // Update entity with form data
         $em->flush();
