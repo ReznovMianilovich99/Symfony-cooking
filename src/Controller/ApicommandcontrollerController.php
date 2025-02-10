@@ -45,7 +45,7 @@ public function create(Request $request, EntityManagerInterface $em ): Response
     $user = $em->getRepository(User::class)->find($data['iduser']['id']);
     if (!$user) 
     {
-        throw new \Exception("Plat non trouvé");
+        throw new \Exception("User non trouvé");
     }
 
     // Charger les Plats
