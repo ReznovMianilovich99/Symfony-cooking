@@ -85,6 +85,20 @@ final class ApiusercontrollerController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
+    #[Route('/apiuser/byemailandpass', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
+    public function showby(Request $req , int $id , UserRepository $userRepository): JsonResponse
+    {
+        $data = json_decode($req->getContent(), true);
+        // $users = $userRepository->findById($id);
+        $users = $userRepository->findOneBy(['email' => $data['email']],['password' => $data['password']]);
+        foreach ($users as $user) 
+        {
+            $userDTO[] = new UserDTO($user);
+        }
+        $data = $this->serializer->serialize($userDTO, 'json');
+        return new JsonResponse($data, Response::HTTP_OK, [], true);
+    }
+
     #[Route('/apiuser/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
     public function edit(Request $req, int $id, #[MapRequestPayload] User $user, EntityManagerInterface $em, UserRepository $repository){
         $exist = $repository->find($id);
