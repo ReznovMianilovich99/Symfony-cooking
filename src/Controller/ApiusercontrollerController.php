@@ -104,8 +104,7 @@ final class ApiusercontrollerController extends AbstractController
             return new JsonResponse(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
         }
         
-        // Vérifier le mot de passe (assurez-vous que le mot de passe dans la DB est haché)
-        if (!password_verify($data['password'], $user->getPassword())) {
+        if ($data['password'] !== $user->getPassword()) {
             return new JsonResponse(['error' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
         }
         
