@@ -85,19 +85,37 @@ final class ApiusercontrollerController extends AbstractController
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
-    #[Route('/apiuser/byemailandpass', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
-    public function showby(Request $req , UserRepository $userRepository): JsonResponse
+    #[Route('/apiuser/byemailandpass', methods: 'GET')]
+    public function showby(Request $req, UserRepository $userRepository): JsonResponse
     {
+        // Récupérer les données de la requête JSON
         $data = json_decode($req->getContent(), true);
-        // $users = $userRepository->findById($id);
-        $users = $userRepository->findOneBy(['email' => $data['email']],['password' => $data['password']]);
-        foreach ($users as $user) 
-        {
-            $userDTO[] = new UserDTO($user);
+        
+        // Vérifier que l'email et le mot de passe existent dans la requête
+        if (!isset($data['email']) || !isset($data['password'])) {
+            return new JsonResponse(['error' => 'Email and password are required'], Response::HTTP_BAD_REQUEST);
         }
+        
+        // Rechercher un utilisateur par email
+        $user = $userRepository->findOneBy(['email' => $data['email']]);
+        
+        // Vérifier si l'utilisateur existe
+        if (!$user) {
+            return new JsonResponse(['error' => 'User not found'], Response::HTTP_NOT_FOUND);
+        }
+        
+        // Vérifier le mot de passe (assurez-vous que le mot de passe dans la DB est haché)
+        if (!password_verify($data['password'], $user->getPassword())) {
+            return new JsonResponse(['error' => 'Invalid password'], Response::HTTP_UNAUTHORIZED);
+        }
+        
+        // Si l'utilisateur est trouvé et le mot de passe est correct, retourner les données de l'utilisateur
+        $userDTO = new UserDTO($user);
         $data = $this->serializer->serialize($userDTO, 'json');
+        
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
+    
 
     #[Route('/apiuser/{id}/edit', methods: 'PUT' ,requirements: ['id' => Requirement::DIGITS])]
     public function edit(Request $req, int $id, #[MapRequestPayload] User $user, EntityManagerInterface $em, UserRepository $repository){
