@@ -74,11 +74,7 @@ class Commande
 
     public function addListplat(Plat $listplat): static
     {
-        if (!$this->listplat->contains($listplat)) 
-        {
-            $this->listplat->add($listplat);
-        }
-
+        $this->listplat->add($listplat);
         return $this;
     }
 

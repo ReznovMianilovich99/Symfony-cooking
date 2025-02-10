@@ -27,6 +27,61 @@ final class ApicommandcontrollerController extends AbstractController
         $this->serializer = $serializer;
     }
 
+
+
+    #[Route('/apiCommande/trynew', methods: 'POST')]
+    public function newcreate(Request $request, EntityManagerInterface $em ): Response
+    {
+        $data = json_decode($request->getContent(), true);
+        // Charger le user
+        $user = $em->getRepository(User::class)->find($data['iduser']['id']);
+        if (!$user) 
+        {
+            throw new \Exception("User non trouvé");
+        }
+        // Charger les Plats
+        $plats = [];
+
+        foreach ($data['idplats'] as $platData) 
+        {
+            $plat = $em->getRepository(Plat::class)->find($platData['id']);
+            if (!$plat) 
+            {
+                throw new \Exception("Ingrédient non trouvé");
+            }
+            $plats[] = $plat;
+        }
+        // Créer la Commande
+        $commande = new Commande();
+        $commande->setIduser($user);
+        $commande->setDateheurecommande(new \DateTimeImmutable($data['dateheurecommande']));
+        $commande->setTotaleprice($data['totaleprice']);
+        $commande->setPaiementcheck($data['paiementcheck']);
+        $commande->setIsready($data['isready']);
+        $commande->setIssend($data['issend']);
+
+        foreach ($plats as $plat) 
+        {
+            $commande->addListplat($plat);
+            foreach ($data['idplats'] as $platData) 
+            {
+                for ($i=0; $i < $platData['num']; $i++) 
+                { 
+                    $commande->addListplat($plat);
+                }
+            }
+        }
+        
+        // Enregistrer la Commande
+        $em->persist($commande);
+        $em->flush();
+        return $this->json("OK created");
+    }
+
+
+
+
+
     #[Route('/apiCommande/all',methods: "GET")]
     public function index(CommandeRepository $commandeRepository): JsonResponse
     {
