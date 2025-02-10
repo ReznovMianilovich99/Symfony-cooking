@@ -10,7 +10,7 @@ class CommandeDTO
     public ?int $id = null;
     public ?array $iduser = null; // Simplified user data
     public ?array $listplat = null; // Simplified list of plats
-    public ?string $dateheurecommande = null;
+    public ?\DateTimeImmutable $dateheurecommande = null;
     public ?string $totaleprice = null;
     public ?bool $paiementcheck = null;
     public ?bool $isready = null;
