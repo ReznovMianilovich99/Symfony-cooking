@@ -113,7 +113,7 @@ public function create(Request $request, EntityManagerInterface $em ): Response
 
     // Créer la Commande
     $exist->setIduser($user);
-    $exist->setDateheurecommande($data['dateheurecommande']);
+    $exist->setDateheurecommande(new \DateTimeImmutable($data['dateheurecommande']));
     $exist->setTotaleprice($data['totaleprice']);
     $exist->setPaiementcheck($data['paiementcheck']);
     $exist->setIsready($data['isready']);
