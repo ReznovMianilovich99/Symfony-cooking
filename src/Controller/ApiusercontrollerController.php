@@ -75,9 +75,13 @@ final class ApiusercontrollerController extends AbstractController
     #[Route('/apiuser/byid/{id}', methods: 'GET', requirements: ['id' => Requirement::DIGITS])]
     public function show(int $id , UserRepository $userRepository): JsonResponse
     {
-        $user = $userRepository->findById($id);
-        $data = $this->serializer->serialize($user, 'json');
+        $users = $userRepository->findById($id);
 
+        foreach ($users as $user) 
+        {
+            $userDTO[] = new UserDTO($user);
+        }
+        $data = $this->serializer->serialize($userDTO, 'json');
         return new JsonResponse($data, Response::HTTP_OK, [], true);
     }
 
