@@ -59,11 +59,10 @@ public function create(Request $request, EntityManagerInterface $em ): Response
         }
         $plats[] = $plat;
     }
-
     // Créer la Commande
     $commande = new Commande();
     $commande->setIduser($user);
-    $commande->setDateheurecommande($data['dateheurecommande']);
+    $commande->setDateheurecommande(new \DateTimeImmutable($data['dateheurecommande']));
     $commande->setTotaleprice($data['totaleprice']);
     $commande->setPaiementcheck($data['paiementcheck']);
     $commande->setIsready($data['isready']);
